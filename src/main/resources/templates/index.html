@@ -12,15 +12,15 @@
     <div class="container-fluid px-4 px-lg-5">
         <a class="navbar-brand d-flex align-items-center m-0" th:href="@{/}"><span class="brand-mark">R</span><span class="brand-name">Review<span>Me</span></span></a>
         <div class="d-flex gap-2 align-items-center">
-            <span class="muted small" th:if="${session.gameflixUsername != null}" th:text="'Hi, ' + ${session.gameflixUsername}">Hi, player</span>
-            <a th:if="${session.gameflixUsername != null}" th:href="@{/account}" class="btn btn-quiet">My Account</a>
-            <a th:if="${session.gameflixRole == 'CREATOR' or session.gameflixRole == 'ADMIN'}" th:href="@{/creator}" class="btn btn-quiet">Creator Dashboard</a>
-            <a th:if="${session.gameflixRole == 'ADMIN'}" th:href="@{/admin}" class="btn btn-quiet">Admin</a>
-            <a th:if="${session.gameflixUsername == null}" th:href="@{/login}" class="btn btn-quiet">Log in</a>
-            <a th:if="${session.gameflixUsername == null}" th:href="@{/register}" class="btn btn-quiet">Register</a>
-            <form th:if="${session.gameflixUsername != null}" th:action="@{/logout}" method="post" class="m-0"><button class="btn btn-quiet" type="submit">Log out</button></form>
+            <span class="muted small" th:if="${session.reviewmeUsername != null}" th:text="'Hi, ' + ${session.reviewmeUsername}">Hi, player</span>
+            <a th:if="${session.reviewmeUsername != null}" th:href="@{/account}" class="btn btn-quiet">My Account</a>
+            <a th:if="${session.reviewmeRole == 'CREATOR' or session.reviewmeRole == 'ADMIN'}" th:href="@{/creator}" class="btn btn-quiet">Creator Dashboard</a>
+            <a th:if="${session.reviewmeRole == 'ADMIN'}" th:href="@{/admin}" class="btn btn-quiet">Admin</a>
+            <a th:if="${session.reviewmeUsername == null}" th:href="@{/login}" class="btn btn-quiet">Log in</a>
+            <a th:if="${session.reviewmeUsername == null}" th:href="@{/register}" class="btn btn-quiet">Register</a>
+            <form th:if="${session.reviewmeUsername != null}" th:action="@{/logout}" method="post" class="m-0"><button class="btn btn-quiet" type="submit">Log out</button></form>
             <a th:href="@{/following}" class="btn btn-quiet">Following feed</a>
-            <a th:if="${session.gameflixRole == 'CREATOR' or session.gameflixRole == 'ADMIN'}" th:href="@{/showNewGameForm}" class="btn btn-gf">+ Add a game</a>
+            <a th:if="${session.reviewmeRole == 'CREATOR' or session.reviewmeRole == 'ADMIN'}" th:href="@{/showNewGameForm}" class="btn btn-gf">+ Add a game</a>
         </div>
     </div>
 </nav>
@@ -54,7 +54,7 @@
         <div th:if="${#lists.isEmpty(listGames)}" class="empty-state panel">
             <div class="display-6 mb-3">🎮</div><h3 class="h5 text-white">Your library is ready for its first game</h3>
             <p class="mb-3">Add a game to start building your collection and collecting community reviews.</p>
-            <a th:if="${session.gameflixRole == 'CREATOR' or session.gameflixRole == 'ADMIN'}" th:href="@{/showNewGameForm}" class="btn btn-gf">Add your first game</a>
+            <a th:if="${session.reviewmeRole == 'CREATOR' or session.reviewmeRole == 'ADMIN'}" th:href="@{/showNewGameForm}" class="btn btn-gf">Add your first game</a>
         </div>
         <div id="gameGrid" class="row g-4" th:unless="${#lists.isEmpty(listGames)}">
             <div class="col-sm-6 col-xl-4 game-item" th:each="game,iter : ${listGames}" th:attr="data-search=${(game.title + ' ' + game.genre + ' ' + game.platform).toLowerCase()}">
@@ -74,7 +74,7 @@
                         </div>
                         <div class="d-flex gap-2">
                             <a class="btn btn-gf flex-grow-1" th:href="@{/games/{id}(id=${game.id})}">View reviews <span aria-hidden="true">→</span></a>
-                            <a th:if="${session.gameflixRole == 'CREATOR' or session.gameflixRole == 'ADMIN'}" class="btn btn-quiet" th:href="@{/showFormForUpdate/{id}(id=${game.id})}" aria-label="Edit game">Edit</a>
+                            <a th:if="${session.reviewmeRole == 'CREATOR' or session.reviewmeRole == 'ADMIN'}" class="btn btn-quiet" th:href="@{/showFormForUpdate/{id}(id=${game.id})}" aria-label="Edit game">Edit</a>
                         </div>
                     </div>
                 </article>
