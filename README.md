@@ -144,7 +144,15 @@ Administrator verification indicates that a discount code was reviewed within th
 
 The reporting workflow provides a process for administrator review and does not automatically determine whether reported content is fraudulent.
 
-## Stopping the Application
+## Stopping the Application: 
+
+Close existing powersheel or terminal and terminate the run.
+
+In terminal or powershell
+
+cd ~ /ReviewMe_Final
+
+Then once in the ReviewMe_Final directory
 
 To stop the containers, run:
 
@@ -159,3 +167,25 @@ docker compose down -v
 ```
 
 **Warning:** The second command permanently deletes the Docker database volume and its stored data.
+
+
+Then to remove file while still in ReviewMe_Final
+cd ~ 
+
+Then
+
+rm -rf ReviewMe_Final
+
+
+Thanks for Reading to the end!
+
+
+
+
+
+
+
+
+
+
+
