@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Account | ReviewMe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/gameflix.css}">
+</head>
+<body>
+<nav class="navbar navbar-gf navbar-dark py-3"><div class="container-fluid px-4 px-lg-5">
+<a class="navbar-brand d-flex align-items-center m-0" th:href="@{/}"><span class="brand-mark">R</span><span class="brand-name">Review<span>Me</span></span></a>
+<a th:href="@{/}" class="btn btn-quiet">← Back to ReviewMe</a>
+</div></nav>
+<main class="page-wrap" style="max-width:900px">
+<section class="panel p-4 p-md-5 mt-4">
+<div class="eyebrow mb-2">Account settings</div><h1 class="section-title mb-2">My Account</h1>
+<p class="muted mb-4">View your account information and the permissions available to you.</p>
+<div class="row g-3 mb-4">
+<div class="col-md-6"><div class="border rounded-3 p-3 h-100"><div class="muted small mb-1">Username</div><div class="h5 mb-0" th:text="${accountUser.username}">username</div></div></div>
+<div class="col-md-6"><div class="border rounded-3 p-3 h-100"><div class="muted small mb-1">Your role</div>
+<span class="badge fs-6" th:classappend="${accountUser.role == 'ADMIN' ? ' text-bg-danger' : (accountUser.role == 'CREATOR' ? ' text-bg-primary' : ' text-bg-secondary')}" th:text="${accountUser.role == 'ADMIN' ? 'Admin' : (accountUser.role == 'CREATOR' ? 'Content Creator' : 'Regular User')}">Regular User</span>
+<p class="muted small mt-2 mb-0" th:text="${accountUser.role == 'ADMIN' ? 'You can manage accounts and assign roles.' : (accountUser.role == 'CREATOR' ? 'You can manage your creator profile and creator content.' : 'You can browse games and write regular game reviews.')}">Role description</p>
+</div></div></div>
+<div class="d-flex flex-wrap gap-2">
+<a class="btn btn-gf" th:if="${accountUser.role == 'CREATOR' or accountUser.role == 'ADMIN'}" th:href="@{/creator}">Creator Dashboard</a>
+<a class="btn btn-gf" th:if="${accountUser.role == 'ADMIN'}" th:href="@{/admin}">Admin Dashboard</a>
+<div class="alert alert-info w-100 mt-2 mb-0" th:if="${accountUser.role == 'USER'}"><strong>Want to become a content creator?</strong><br>Creator access is assigned by a ReviewMe admin. Contact an admin to request the Content Creator role.</div>
+</div>
+<div class="mt-4" th:if="${creatorProfile != null}"><h2 class="h5">Creator profile</h2><p class="mb-1"><strong>Channel:</strong> <span th:text="${creatorProfile.channelName}">Channel name</span></p><p class="mb-1" th:if="${creatorProfile.channelUrl != null and !creatorProfile.channelUrl.isBlank()}"><strong>Channel URL:</strong> <a th:href="${creatorProfile.channelUrl}" th:text="${creatorProfile.channelUrl}" target="_blank" rel="noopener">Channel URL</a></p><p class="muted" th:if="${creatorProfile.bio != null}" th:text="${creatorProfile.bio}">Bio</p></div>
+</section></main></body></html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Creator Dashboard | ReviewMe</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><link rel="stylesheet" th:href="@{/css/gameflix.css}"></head>
+<body><main class="page-wrap" style="max-width:900px"><a th:href="@{/}" class="page-link-back">← Back to ReviewMe</a><section class="panel p-4 p-md-5 mt-4"><div class="eyebrow mb-2">ReviewMe creator tools</div><h1 class="section-title mb-2">Creator Dashboard</h1><p class="muted">Manage the public information associated with your creator account.</p><div th:if="${dashboardError}" class="alert alert-danger" th:text="${dashboardError}"></div><div th:if="${dashboardSuccess}" class="alert alert-success" th:text="${dashboardSuccess}"></div>
+<form th:action="@{/creator/profile}" method="post"><label class="form-label" for="channelName">Channel name</label><input class="form-control mb-3" id="channelName" name="channelName" maxlength="150" required th:value="${profile.channelName}"><label class="form-label" for="channelUrl">YouTube or channel URL</label><input class="form-control mb-3" id="channelUrl" name="channelUrl" type="url" maxlength="500" placeholder="https://www.youtube.com/@yourchannel" th:value="${profile.channelUrl}"><label class="form-label" for="bio">Creator bio</label><textarea class="form-control mb-4" id="bio" name="bio" rows="4" maxlength="5000" th:text="${profile.bio}"></textarea><button class="btn btn-gf" type="submit">Save creator profile</button></form>
+
+<hr class="my-5">
+<section id="creator-reviews" class="mb-5">
+  <div class="eyebrow mb-2">Independent creator ratings</div><h2 class="section-title h3 mb-2">Your video reviews</h2>
+  <p class="muted">These 1–10 scores are displayed separately from player community ratings.</p>
+  <form th:action="@{/creator/reviews}" method="post" class="panel p-3 p-md-4 mb-4">
+    <div class="mb-3"><label class="form-label" for="reviewGameId">Game</label><select class="form-select" id="reviewGameId" name="gameId" required><option value="">Choose a game</option><option th:each="game : ${games}" th:value="${game.id}" th:text="${game.title}">Game</option></select></div>
+    <div class="mb-3"><label class="form-label" for="videoUrl">Video review URL</label><input class="form-control" id="videoUrl" name="videoUrl" type="url" maxlength="500" placeholder="https://www.youtube.com/watch?v=..." required></div>
+    <div class="mb-3"><label class="form-label" for="creatorRating">Your score (1–10)</label><input class="form-control" id="creatorRating" name="rating" type="number" min="1" max="10" step="0.5" required></div>
+    <div class="mb-3"><label class="form-label" for="creatorReviewText">Review notes</label><textarea class="form-control" id="creatorReviewText" name="reviewText" rows="3" maxlength="5000" placeholder="What did you think of the game?"></textarea></div>
+    <div class="mb-3"><label class="form-label" for="disclosureType">Sponsorship / relationship disclosure</label><select class="form-select" id="disclosureType" name="disclosureType" required><option value="NONE">No material connection (independent)</option><option value="PAID">Paid sponsorship</option><option value="FREE_PRODUCT">Free game, product, or early access received</option><option value="AFFILIATE">Affiliate link or commission</option><option value="OTHER">Other compensation or relationship</option></select><div class="form-text">Choose the most accurate option. Disclosures are shown publicly.</div></div><div class="mb-3"><label class="form-label" for="disclosureDetails">Disclosure details (required unless independent)</label><textarea class="form-control" id="disclosureDetails" name="disclosureDetails" rows="2" maxlength="2000" placeholder="e.g. Publisher provided a review copy; no payment received."></textarea></div>
+    <button class="btn btn-gf" type="submit">Save video review and score</button>
+  </form>
+  <div th:if="${#lists.isEmpty(creatorReviews)}" class="muted">You haven't added any video reviews yet.</div>
+  <div class="d-flex flex-column gap-3" th:unless="${#lists.isEmpty(creatorReviews)}">
+    <article class="panel p-3" th:each="item : ${creatorReviews}">
+      <div class="d-flex justify-content-between flex-wrap gap-2"><h3 class="h5 mb-1" th:text="${item.game.title}">Game title</h3><span class="badge text-bg-info" th:text="${item.rating + ' / 10 creator score'}">8.5 / 10</span></div>
+      <p class="muted small mb-2" th:text="${item.createdAt}">Date</p><p th:if="${item.reviewText != null}" th:text="${item.reviewText}">Review</p>
+      <a th:href="${item.videoUrl}" target="_blank" rel="noopener noreferrer">Watch video review ↗</a>
+      <span class="badge text-bg-success ms-2" th:if="${item.disclosureType == 'NONE' and !item.sponsored}">Self-reported independent</span><span class="badge text-bg-warning ms-2" th:if="${item.disclosureType != 'NONE' or item.sponsored}" th:text="${item.disclosureType == 'NONE' ? 'Sponsored (legacy; details unavailable)' : item.disclosureType}">Disclosure</span>
+      <p class="small mt-2" th:if="${item.disclosureDetails != null}" th:text="${item.disclosureDetails}">Disclosure details</p>
+      <form th:action="@{/reports}" method="post" class="mt-2"><input type="hidden" name="targetType" value="REVIEW"><input type="hidden" name="targetId" th:value="${item.id}"><input type="hidden" name="reason" value="Potentially misleading disclosure"><button class="btn btn-outline-secondary btn-sm" type="submit">Report review</button></form>
+      <a class="btn btn-outline-secondary btn-sm mt-2" th:href="@{/creators/{id}(id=${item.creator.id})}">View public creator profile</a>
+    </article>
+  </div>
+</section>
+<hr class="my-5">
+<section id="discount-codes">
+  <div class="eyebrow mb-2">Affiliate and promotional tools</div><h2 class="section-title h3 mb-2">Discount codes</h2><p class="muted">Add codes your audience can use. You can optionally connect each code to a game and store link.</p>
+  <form th:action="@{/creator/codes}" method="post" class="panel p-3 p-md-4 mb-4">
+    <div class="mb-3"><label class="form-label" for="codeGameId">Related game (optional)</label><select class="form-select" id="codeGameId" name="gameId"><option value="">General code / no specific game</option><option th:each="game : ${games}" th:value="${game.id}" th:text="${game.title}">Game</option></select></div>
+    <div class="mb-3"><label class="form-label" for="discountCode">Discount code</label><input class="form-control" id="discountCode" name="code" maxlength="100" required placeholder="e.g. GAMEFLIX10"></div>
+    <div class="mb-3"><label class="form-label" for="discountDescription">Discount details</label><input class="form-control" id="discountDescription" name="discountDescription" maxlength="255" placeholder="e.g. 10% off the game"></div>
+    <div class="mb-3"><label class="form-label" for="storeUrl">Store or redemption URL (optional)</label><input class="form-control" id="storeUrl" name="storeUrl" type="url" maxlength="500" placeholder="https://..."></div>
+    <div class="mb-3"><label class="form-label" for="expiresAt">Expiration date (optional)</label><input class="form-control" id="expiresAt" name="expiresAt" type="date"></div>
+    <div class="mb-3"><label class="form-label" for="affiliateDisclosure">Affiliate disclosure (optional)</label><textarea class="form-control" id="affiliateDisclosure" name="affiliateDisclosure" rows="2" maxlength="5000" placeholder="e.g. I may earn a commission if you use this code."></textarea></div>
+    <button class="btn btn-gf" type="submit">Save discount code</button>
+  </form>
+  <div th:if="${#lists.isEmpty(creatorCodes)}" class="muted">You haven't added any discount codes yet.</div>
+  <div class="d-flex flex-column gap-3" th:unless="${#lists.isEmpty(creatorCodes)}">
+    <article class="panel p-3" th:each="item : ${creatorCodes}">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2"><div><h3 class="h5 mb-1" th:text="${item.code}">CODE</h3><p class="muted mb-1" th:if="${item.game != null}" th:text="${'For: ' + item.game.title}">Game</p><p class="mb-1" th:if="${item.discountDescription != null}" th:text="${item.discountDescription}">Discount details</p></div><span class="badge text-bg-success" th:if="${item.verified}">Verified code</span><span class="badge text-bg-secondary" th:if="${item.expiresAt != null}" th:text="${'Expires ' + item.expiresAt}">Expiration</span></div>
+      <a th:if="${item.storeUrl != null}" th:href="${item.storeUrl}" target="_blank" rel="noopener noreferrer">Open store link ↗</a>
+      <p class="muted small mt-2 mb-2" th:if="${item.affiliateDisclosure != null}" th:text="${item.affiliateDisclosure}">Disclosure</p>
+      <form th:action="@{/creator/codes/{id}/delete(id=${item.id})}" method="post" class="mt-2"><button class="btn btn-outline-danger btn-sm" type="submit">Delete code</button></form>
+      <form th:action="@{/reports}" method="post" class="mt-2"><input type="hidden" name="targetType" value="CODE"><input type="hidden" name="targetId" th:value="${item.id}"><input type="hidden" name="reason" value="Discount code invalid or expired"><button class="btn btn-outline-secondary btn-sm" type="submit">Report invalid code</button></form>
+    </article>
+  </div>
+</section>
+</section></main></body></html>
