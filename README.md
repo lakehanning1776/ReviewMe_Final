@@ -48,7 +48,7 @@ The platform allows users to discover games, read and submit community reviews, 
 - Docker Desktop
 - Git (if cloning the repository)
 
-### Step 1: Download the Project
+### Step 1: Download the Project - using powershell or terminal
 
 Clone the repository:
 
